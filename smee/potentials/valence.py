@@ -36,7 +36,7 @@ def compute_harmonic_bond_energy(
     k = parameters[:, potential.parameter_cols.index("k")]
     length = parameters[:, potential.parameter_cols.index("length")]
 
-    return (0.5 * k * (distances - length) ** 2).sum(-1)
+    return 0.5 * k * (distances - length) ** 2
 
 
 @smee.potentials.potential_energy_fn(
@@ -68,7 +68,7 @@ def compute_harmonic_angle_energy(
     k = parameters[:, potential.parameter_cols.index("k")]
     angle = parameters[:, potential.parameter_cols.index("angle")]
 
-    return (0.5 * k * (theta - angle) ** 2).sum(-1)
+    return 0.5 * k * (theta - angle) ** 2
 
 
 def _compute_cosine_torsion_energy(
@@ -100,7 +100,7 @@ def _compute_cosine_torsion_energy(
     phase = parameters[:, potential.parameter_cols.index("phase")]
     idivf = parameters[:, potential.parameter_cols.index("idivf")]
 
-    return ((k / idivf) * (1.0 + torch.cos(periodicity * phi - phase))).sum(-1)
+    return (k / idivf) * (1.0 + torch.cos(periodicity * phi - phase))
 
 
 @smee.potentials.potential_energy_fn(
