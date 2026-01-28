@@ -182,35 +182,3 @@ def convert_impropers(
     return convert_valence_handlers(
         handlers, "ImproperTorsions", ("k", "periodicity", "phase", "idivf")
     )
-
-
-# @smee.converters.smirnoff_parameter_converter(
-#     "LinearBonds",
-#     {
-#         "k1": _KCAL_PER_MOL / _ANGSTROM**2,
-#         "k2": _KCAL_PER_MOL / _ANGSTROM**2,
-#         "b1": _ANGSTROM,
-#         "b2": _ANGSTROM,
-#     },
-# )
-# def convert_linearized_bonds(
-#     handlers: list[openff.interchange.smirnoff.SMIRNOFFBondCollection],
-# ) -> tuple[smee.TensorPotential, list[smee.ValenceParameterMap]]:
-#     return convert_valence_handlers(handlers, "LinearBonds", ("k1", "k2", "b1", "b2"))
-
-
-# @smee.converters.smirnoff_parameter_converter(
-#     "LinearAngles",
-#     {
-#         "k1": _KCAL_PER_MOL / _RADIANS**2,
-#         "k2": _KCAL_PER_MOL / _RADIANS**2,
-#         "angle1": _RADIANS,
-#         "angle2": _RADIANS,
-#     },
-# )
-# def convert_linearized_angles(
-#     handlers: list[openff.interchange.smirnoff.SMIRNOFFAngleCollection],
-# ) -> tuple[smee.TensorPotential, list[smee.ValenceParameterMap]]:
-#     return convert_valence_handlers(
-#         handlers, "LinearAngles", ("k1", "k2", "angle1", "angle2")
-#     )
