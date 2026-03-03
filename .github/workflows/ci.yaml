@@ -29,21 +29,12 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest]
         python-version: ["311", "312"]
-        extras: [fe-examples-cpu, fe-examples-cu12, cpu, examples-pydantic-1-cpu, examples-pydantic-1-cu12]
+        # Exclude the CUDA envs as we can't test them on GitHub Actions
         base:
           - openeye-fe-examples-cpu
           - ambertools-fe-examples-cpu
           - openeye-cpu
-          - ambertools-fe-examples-cu12
           - ambertools-examples-pydantic-1-cpu
-          - ambertools-examples-pydantic-1-cu12
-
-        exclude:
-          # CUDA envs don't run on macOS
-          - os: macos-latest
-            extras: fe-examples-cu12
-          - os: macos-latest
-            extras: examples-pydantic-1-cu12
 
     steps:
       - uses: actions/checkout@v4
