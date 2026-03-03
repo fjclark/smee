@@ -16,29 +16,29 @@ jobs:
       - uses: pre-commit/action@v3.0.1
 
   test-matrix:
-    name: Test (${{ matrix.os }}, ${{ matrix.toolkit }}-${{ matrix.extras }}-py${{ matrix.python-version }})
+    name: Test (${{ matrix.os }}, ${{ matrix.base }}-py${{ matrix.python-version }})
     needs: pre-commit
     runs-on: ${{ matrix.os }}
 
     env:
       OE_LICENSE: ${{ github.workspace }}/oe_license.txt
-      PIXI_ENV: ${{ matrix.toolkit }}-${{ matrix.extras }}-py${{ matrix.python-version }}
+      PIXI_ENV: ${{ matrix.base }}-py${{ matrix.python-version }}
 
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
         python-version: ["311", "312"]
-        toolkit: [openeye, ambertools]
         extras: [fe-examples-cpu, fe-examples-cu12, cpu, examples-pydantic-1-cpu, examples-pydantic-1-cu12]
+        base:
+          openeye-fe-examples-cpu
+          ambertools-fe-examples-cpu
+          openeye-cpu
+          ambertools-fe-examples-cu12
+          ambertools-examples-pydantic-1-cpu
+          ambertools-examples-pydantic-1-cu12
+
         exclude:
-          # No CUDA or pydantic 1 envs with OE
-          - toolkit: openeye
-            extras: fe-examples-cu12
-          - toolkit: openeye
-            extras: examples-pydantic-1-cpu
-          - toolkit: openeye
-            extras: examples-pydantic-1-cu12
           # CUDA envs don't run on macOS
           - os: macos-latest
             extras: fe-examples-cu12
