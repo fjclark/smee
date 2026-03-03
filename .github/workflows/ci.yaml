@@ -22,33 +22,64 @@ jobs:
   test-matrix:
     name: Test (${{ matrix.os }}, ${{ matrix.environment }})
     needs: pre-commit
+
+    env:
+      OE_LICENSE: ${{ github.workspace }}/oe_license.txt
+
+    needs: pre-commit
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        pixi-environment: [default, pydantic-1-cpu, ambertools, openeye]
+      fail-fast: false
+
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        environment:
-          - cpu-py311
-          - cpu-py312
-          - pydantic-1-cpu-py311
-          - pydantic-1-cpu-py312
+        pixi-environment:
+          # Standard CPU envs with ambertools and openeye
+          - openeye-fe-examples-cpu-py311
+          - openeye-fe-examples-cpu-py312
+          - ambertools-fe-examples-cpu-py311
+          - ambertools-fe-examples-cpu-py312
+
+          # Stripped down envs with no ambertools
+          - openeye-cpu-py311
+          - openeye-cpu-py312
+
+          # CUDA 12 envs
+          - ambertools-fe-examples-cu12-py311
+          - ambertools-fe-examples-cu12-py312
+
+          # Pydantic 1 envs
+          - ambertools-examples-pydantic-1-cpu-py311
+          - ambertools-examples-pydantic-1-cpu-py312
+          - ambertools-examples-pydantic-1-cu12-py311
+          - ambertools-examples-pydantic-1-cu12-py312
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Make oe_license.txt file from GH org secret "OE_LICENSE"
+      env:
+        OE_LICENSE_TEXT: ${{ secrets.OE_LICENSE }}
+      run: echo "${OE_LICENSE_TEXT}" > ${OE_LICENSE}
 
     - name: Setup pixi
       uses: prefix-dev/setup-pixi@v0.9.3
       with:
         pixi-version: v0.62.2
         cache: true
-        environments: ${{ matrix.environment }}
+        environments: ${{ matrix.pixi-environment }}
 
     - name: Run tests
-      run: pixi run -e ${{ matrix.environment }} test
+      run: pixi run -e ${{ matrix.pixi-environment }} test
 
     - name: Test examples
-      if: ${{ !contains(matrix.environment, 'pydantic-1') }}
-      run: pixi run -e ${{ matrix.environment }} test-examples
+      if: ${{ contains(matrix.pixi-environment, 'examples') }}
+      run: pixi run -e ${{ matrix.pixi-environment }} test-examples
 
     - name: CodeCov
       uses: codecov/codecov-action@v4.1.1
